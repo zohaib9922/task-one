@@ -36,6 +36,64 @@ class CreateCinemaSchema extends Migration
      */
     public function up()
     {
+        Schema::create('movies', function ( $table) {
+            $table->id();
+            $table->string('title');
+            $table->text('description');
+            $table->timestamps();
+        });
+
+        Schema::create('shows', function ( $table) {
+            $table->id();
+            $table->unsignedBigInteger('movie_id');
+            $table->foreign('movie_id')->references('id')->on('movies')->onDelete('cascade');
+            $table->dateTime('start_time');
+            $table->integer('available_seats');
+            $table->integer('total_seats');
+            $table->timestamps();
+        });
+
+        Schema::create('rooms', function ( $table) {
+            $table->id();
+            $table->string('name');
+            $table->timestamps();
+        });
+
+        Schema::create('showroom', function ( $table) {
+            $table->id();
+            $table->unsignedBigInteger('show_id');
+            $table->foreign('show_id')->references('id')->on('shows')->onDelete('cascade');
+            $table->unsignedBigInteger('room_id');
+            $table->foreign('room_id')->references('id')->on('rooms')->onDelete('cascade');
+            $table->timestamps();
+        });
+
+        Schema::create('pricings', function ( $table) {
+            $table->id();
+            $table->unsignedBigInteger('show_id');
+            $table->foreign('show_id')->references('id')->on('shows')->onDelete('cascade');
+            $table->decimal('price', 8, 2);
+            $table->timestamps();
+        });
+
+        Schema::create('seat_types', function ( $table) {
+            $table->id();
+            $table->string('name');
+            $table->decimal('premium_percentage', 5, 2)->default(0);
+            $table->timestamps();
+        });
+
+        Schema::create('seats', function ( $table) {
+            $table->id();
+            $table->unsignedBigInteger('showroom_id');
+            $table->foreign('showroom_id')->references('id')->on('showroom')->onDelete('cascade');
+            $table->unsignedBigInteger('seat_type_id');
+            $table->foreign('seat_type_id')->references('id')->on('seat_types')->onDelete('cascade');
+            $table->string('seat_number');
+            $table->boolean('is_booked')->default(false);
+            $table->timestamps();
+        });
+
         throw new \Exception('implement in coding task 4, you can ignore this exception if you are just running the initial migrations.');
     }
 
