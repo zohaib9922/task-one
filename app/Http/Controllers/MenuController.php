@@ -93,6 +93,7 @@ class MenuController extends BaseController
      */
 
     public function getMenuItems() {
+        return MenuItem::all();
         throw new \Exception('implement in coding task 3');
     }
 }
